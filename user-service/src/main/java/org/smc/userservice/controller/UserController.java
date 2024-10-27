@@ -1,16 +1,22 @@
 package org.smc.userservice.controller;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 
 import org.modelmapper.ModelMapper;
-import org.smc.userservice.dto.UserDto;
+import org.smc.userservice.dto.request.UserDto;
+import org.smc.userservice.dto.response.ResponseUser;
+import org.smc.userservice.model.UserEntity;
 import org.smc.userservice.service.UserService;
 import org.smc.userservice.vo.RequestUser;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,4 +44,23 @@ public class UserController {
         return ResponseEntity.created(URI.create("users/" + dto.getUserId().toString())).build();
     }
 
+    @GetMapping("/users")
+    public ResponseEntity<List<ResponseUser>> getUsers() {
+        Iterable<UserEntity> userList = userService.getUserByAll();
+
+        List<ResponseUser> result = new ArrayList<>();
+        userList.forEach(user -> {
+            result.add(new ModelMapper().map(user, ResponseUser.class));
+        });
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/users/{userId}")
+    public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
+        UserDto userDto = userService.getUserByUserId(userId);
+
+        ResponseUser response = new ModelMapper().map(userDto, ResponseUser.class);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 }
