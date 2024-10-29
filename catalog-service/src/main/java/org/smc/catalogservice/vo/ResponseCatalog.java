@@ -4,12 +4,14 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import lombok.Data;
+
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ResponseCatalog(
-	String productId,
-	String productName,
-	Integer unitPrice,
-	Integer stock,
-	Date createdAt
-) {
+public class ResponseCatalog {
+	private String productId;
+	private String productName;
+	private Integer unitPrice;
+	private Integer stock;
+	private Date createdAt;
 }
