@@ -1,5 +1,7 @@
 package org.smc.orderservice.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
@@ -8,11 +10,14 @@ import org.modelmapper.spi.MatchingStrategy;
 import org.smc.orderservice.dto.OrderDto;
 import org.smc.orderservice.entity.OrderEntity;
 import org.smc.orderservice.repository.OrderRepository;
+import org.smc.orderservice.vo.ResponseOrder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 	private final OrderRepository orderRepository;
@@ -41,7 +46,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public Iterable<OrderEntity> getOrdersByUserId(String userId) {
-		return orderRepository.findByUserId(userId);
+	public List<ResponseOrder> getOrdersByUserId(String userId) {
+		List<OrderEntity> orderEntities = orderRepository.findByUserId(userId);
+
+		ModelMapper mapper = new ModelMapper();
+		ArrayList<ResponseOrder> result = new ArrayList<>();
+		orderEntities.forEach(order -> result.add(mapper.map(order, ResponseOrder.class)));
+
+		return result;
 	}
 }

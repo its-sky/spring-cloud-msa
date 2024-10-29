@@ -10,9 +10,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
+@Data
 @Entity
 @Table(name = "orders")
 public class OrderEntity {
@@ -33,6 +33,9 @@ public class OrderEntity {
 	private Integer totalPrice;
 
 	@Column(nullable = false, unique = true)
+	private String orderId;
+
+	@Column(nullable = false)
 	private String userId;
 
 	@Column(nullable = false, updatable = false, insertable = false)
